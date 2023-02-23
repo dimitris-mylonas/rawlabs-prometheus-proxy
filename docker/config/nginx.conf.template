@@ -1,0 +1,7 @@
+server {
+  listen ${NGINX_HOST}:${NGINX_PORT};
+  location / {
+    proxy_set_header x-raw-api-key ${RAW_API_KEY};
+    proxy_pass ${RAW_HTTP_ENDPOINT};
+  }
+}

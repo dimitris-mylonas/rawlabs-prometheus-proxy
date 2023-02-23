@@ -1,0 +1,26 @@
+prometheus_metric_format(metric_name: string) = 
+    let 
+        metric = "prometheus_"+ metric_name,
+        metric_help = """
+# HELP this is a help message for random_metric_A
+""",
+        metric_type = "# TYPE " + metric + " " + "gauge" + "\n",
+        template = metric_help + metric_type + metric + " "
+    in 
+        template
+
+prometheus_endpoint_state() = 
+  let
+    endpoints_status = Json.Read(
+        Http.Get(
+            "http://my.private.http/endpoint",
+            headers = [{"x-raw-api-key","my_api_key"}]
+        ),
+        type collection(record(state: string, count: int))
+    ),
+    failed_endpoints_metrics = prometheus_metric_format("failed_endpoints_metrics") + String.From(Collection.First(Collection.Filter(endpoints_status, status -> status.state == "failed").count)),
+    success_endpoints_metrics = prometheus_metric_format("success_endpoints_metrics") + String.From(Collection.First(Collection.Filter(endpoints_status, status -> status.state == "success").count)),
+    pending_endpoints_metrics = prometheus_metric_format("pending_endpoints_metrics") + String.From(Collection.First(Collection.Filter(endpoints_status, status -> status.state == "pending").count)),
+    metrics = failed_endpoints_metrics + "\n" + success_endpoints_metrics + "\n" + pending_endpoints_metrics
+  in
+    metrics

@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'raw-prometheus-connector'
+    metrics_path: '/'
+    scheme: 'http'
+    static_configs:
+    - targets:
+      - raw-prometheus-connector:8080
