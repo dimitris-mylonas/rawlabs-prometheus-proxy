@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://cdn.raw-labs.com/endpoint-schemaV0.9.json
+raw: 0.9
+endpoint: GET
+metadata:
+  title: Prometheus Metric for Endpoints State Status
+  description: |
+    Prometheus Metric for Endpoints State Status.
+  tags:
+    - prometheus
+code: snapi
+codeFile: prometheus.snapi
+declaration: prometheus_endpoint_state
+format: text
+computeClass: normal
+computeLimitSeconds: 120
+cacheSizeMB: 10
+expireSeconds: 1
+security:
+  public: false
+  scopes:
+    - monitoring
+    - prometheus

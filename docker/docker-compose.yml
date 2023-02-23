@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - "./config/prometheus.yml:/etc/prometheus/prometheus.yml"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+
+  raw-prometheus-connector:
+    image: nginx:stable
+    container_name: raw-prometheus-connector
+    restart: unless-stopped
+    environment:
+      - RAW_HTTP_ENDPOINT="YOUR_ENDPOINT_HERE"
+      - RAW_API_KEY="YOUR_KEY_HERE"
+      - NGINX_PORT=8080
+      - NGINX_HOST=0.0.0.0
+    ports:
+      - 8080:8080
+    volumes:
+      - "./config/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro"
